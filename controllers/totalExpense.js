@@ -13,8 +13,9 @@ export const totalExpense = async(req, res) =>{
         data[0].expenses.forEach((cat)=>{
             cat.items.forEach(item=>{
                 const date = new Date(item.date);
-                const mon = date.getMonth() + 1;
-                if(mon===month){
+                const mon = date.getMonth();
+                // console.log(typeof mon,typeof month);
+                if(mon===Number(month)){
                     totalAmt += item.amount;
                 }
             })

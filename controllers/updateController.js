@@ -15,7 +15,7 @@ export const updateController = async (req, res) => {
     const itemId = item._id;
 
     const response = await Expense.updateOne(
-        { userId: userId, "expenses.category": cat, "expenses.items._id": itemId },
+        { userId: userId, "expenses.items._id": itemId },
         {
           $set: {
             "expenses.$.items.$[item].name": item.name,
@@ -30,6 +30,31 @@ export const updateController = async (req, res) => {
           ]
         }
       );
+
+    return res.status(200).json({ message: response });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const deleteController = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const itemId = req.query.id;
+    
+    if (!itemId) {
+      return res.status(400).json({ message: "Invalid item ID" });
+    }
+
+    const response = await Expense.updateOne(
+      { userId: userId, "expenses.items._id": itemId },
+      {
+        $pull: {
+          "expenses.$[].items": { _id: itemId }
+        }
+      }
+    );
 
     return res.status(200).json({ message: response });
   } catch (error) {
